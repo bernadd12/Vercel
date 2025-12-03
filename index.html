@@ -1,0 +1,258 @@
+
+
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Login FF Sakura</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;600&display=swap" rel="stylesheet">
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'Poppins', sans-serif;
+    }
+
+    html, body {
+      height: 100%;
+      width: 100%;
+      background: linear-gradient(-45deg, #1a001a, #330033, #660066);
+      background-size: 600% 600%;
+      animation: gradientMove 15s ease infinite;
+      overflow-x: hidden;
+    }
+
+    @keyframes gradientMove {
+      0% { background-position: 0% 50%; }
+      50% { background-position: 100% 50%; }
+      100% { background-position: 0% 50%; }
+    }
+
+    body::before {
+      content: '';
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: repeating-linear-gradient(
+        to bottom,
+        rgba(155, 0, 255, 0.1) 0px,
+        rgba(155, 0, 255, 0.2) 1px,
+        transparent 2px,
+        transparent 5px
+      );
+      animation: matrixFlow 2s linear infinite;
+      z-index: -1;
+    }
+
+    @keyframes matrixFlow {
+      0% { background-position-y: 0; }
+      100% { background-position-y: 100px; }
+    }
+
+    .login-box, .tools-box {
+      background: rgba(255, 255, 255, 0.1);
+      backdrop-filter: blur(10px);
+      border: 1px solid rgba(255, 255, 255, 0.3);
+      border-radius: 15px;
+      padding: 30px;
+      width: 100%;
+      max-width: 400px;
+      text-align: center;
+      color: white;
+      animation: fadeIn 1s ease forwards;
+      margin: auto;
+      margin-top: 50px;
+      position: relative;
+      z-index: 1;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(50px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    input, .button {
+      width: 100%;
+      padding: 12px;
+      margin: 10px 0;
+      border: none;
+      border-radius: 8px;
+      outline: none;
+    }
+
+    input {
+      background-color: rgba(255, 255, 255, 0.9);
+      color: black;
+    }
+
+    .button {
+      background: linear-gradient(45deg, #9900ff, #330033);
+      color: white;
+      font-weight: bold;
+      cursor: pointer;
+      box-shadow: 0 0 10px #9900ff, 0 0 20px #330033;
+      animation: neonPulse 1.5s infinite alternate;
+      transition: transform 0.2s ease;
+    }
+
+    .button:hover {
+      transform: scale(1.05);
+    }
+
+    @keyframes neonPulse {
+      from { box-shadow: 0 0 10px #9900ff, 0 0 20px #330033; }
+      to { box-shadow: 0 0 20px #330033, 0 0 40px #9900ff; }
+    }
+
+    .logout {
+      margin-top: 10px;
+      background: linear-gradient(45deg, crimson, darkred);
+    }
+
+    .remember {
+      text-align: left;
+      font-size: 14px;
+    }
+
+    .currentTime {
+      margin-top: 10px;
+      font-weight: bold;
+    }
+
+    #loading {
+      display: none;
+      color: yellow;
+      font-weight: bold;
+      margin: 10px 0;
+    }
+
+    .button-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+      gap: 10px;
+      margin-top: 20px;
+    }
+
+    .sakura {
+      position: fixed;
+      top: -50px;
+      width: 20px;
+      height: 20px;
+      background-image: url('https://pngimg.com/uploads/sakura/sakura_PNG86757.png');
+      background-size: contain;
+      background-repeat: no-repeat;
+      pointer-events: none;
+      z-index: 0;
+      animation: fall linear infinite;
+    }
+
+    @keyframes fall {
+      to {
+        transform: translateY(100vh) rotate(360deg);
+        opacity: 0;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div id="login-box" class="login-box">
+    <h2>こんにちは、ようこそ </h2>
+    <input type="text" id="username" placeholder="Username" />
+    <input type="password" id="password" placeholder="Password" />
+    <div class="remember">
+      <input type="checkbox" id="remember"> <label for="remember">Remember me</label>
+    </div>
+    <button class="button" onclick="login()">Log-In</button>
+  </div>
+
+  <div id="tools-box" class="tools-box" style="display: none;">
+    <h2>イルヌクシェア🫀</h2>
+    <input id="target" placeholder="Nomor Target (62xxx)" />
+    <div class="button-grid">
+      <button class="button" onclick="autoKirim()">Auto Kirim</button>
+      <button class="button" onclick="kirim('/api/forceclose')">Forceclose</button>
+      <button class="button" onclick="kirim('/api/iphoneforceclose')">iPhone Forceclose</button>
+      <button class="button" onclick="kirim('/api/delaywhatsapp')">Delay WhatsApp</button>
+      <button class="button" onclick="kirim('/api/killerdelya')">Killerdelya</button>
+      <button class="button" onclick="kirim('/api/blnakhome')">Blnakhome</button>
+      <button class="button" onclick="kirim('/api/spamfc')">spamfc</button>
+      <button class="button" onclick="kirim('/api/delyaios')">delyaios</button>
+    </div>
+    <div class="currentTime" id="time"></div>
+    <div id="loading">⏳ Mengirim...</div>
+    <button class="button logout" onclick="logout()">Logout</button>
+  </div>
+
+  <script>
+    const userAvatars = {
+      admin: "https://i.ibb.co/4RZx2B0/animated-avatar.gif",
+      rezuly: "https://i.ibb.co/3c1GpDd/cyber.gif"
+    };
+
+    function login() {
+      const u = document.getElementById("username").value.trim();
+      const p = document.getElementById("password").value.trim();
+      if (u === "admin" && p === "1234") {
+        document.getElementById("login-box").style.display = "none";
+        document.getElementById("tools-box").style.display = "block";
+        document.getElementById("avatar").src = userAvatars[u] || userAvatars["admin"];
+      } else {
+        alert("Username atau Password salah!");
+      }
+    }
+
+    function logout() {
+      location.reload();
+    }
+
+    function kirim(endpoint) {
+      const target = document.getElementById("target").value.trim();
+      if (!target) return alert("Isi nomor target!");
+      document.getElementById("loading").style.display = "block";
+      fetch(endpoint, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ target })
+      })
+        .then(res => res.text())
+        .then(res => alert("✅ " + res))
+        .catch(err => alert("❌ Gagal: " + err))
+        .finally(() => document.getElementById("loading").style.display = "none");
+    }
+
+    async function autoKirim() {
+      const endpoints = [
+        "/api/forceclose",
+        "/api/iphoneforceclose",
+        "/api/delaywhatsapp",
+        "/api/killerdelya",
+        "/api/blnakhome",
+        "/api/spamfc",
+        "/api/delyaios"
+      ];
+      for (const url of endpoints) {
+        kirim(url);
+        await new Promise(resolve => setTimeout(resolve, 2000));
+      }
+    }
+
+    setInterval(() => {
+      const now = new Date();
+      document.getElementById("time").textContent = "Waktu: " + now.toLocaleTimeString();
+    }, 1000);
+
+    setInterval(() => {
+      const sakura = document.createElement("div");
+      sakura.classList.add("sakura");
+      sakura.style.left = Math.random() * 100 + "vw";
+      sakura.style.animationDuration = 5 + Math.random() * 5 + "s";
+      document.body.appendChild(sakura);
+      setTimeout(() => sakura.remove(), 10000);
+    }, 300);
+  </script>
+</body>
+</html>
